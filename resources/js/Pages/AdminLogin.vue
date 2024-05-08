@@ -1,15 +1,15 @@
 <template>
     <div class="container col-4 mt-5">
-        <form>
+        <form @submit.prevent="login">
             <!-- Email input -->
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input type="email" id="form2Example1" class="form-control" />
+            <div class="form-outline mb-4">
+                <input type="email" id="form2Example1" class="form-control" v-model="email" required />
                 <label class="form-label" for="form2Example1">Email address</label>
             </div>
 
             <!-- Password input -->
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input type="password" id="form2Example2" class="form-control" />
+            <div class="form-outline mb-4">
+                <input type="password" id="form2Example2" class="form-control" v-model="password" required />
                 <label class="form-label" for="form2Example2">Password</label>
             </div>
 
@@ -30,46 +30,65 @@
             </div>
 
             <!-- Submit button -->
-            <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Sign
-                in</button>
+            <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
 
             <!-- Register buttons -->
             <div class="text-center">
                 <p>Not a member? <a href="#!">Register</a></p>
                 <p>or sign up with:</p>
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                <button type="button" class="btn btn-link btn-floating mx-1">
                     <i class="fab fa-facebook-f"></i>
                 </button>
 
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                <button type="button" class="btn btn-link btn-floating mx-1">
                     <i class="fab fa-google"></i>
                 </button>
 
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                <button type="button" class="btn btn-link btn-floating mx-1">
                     <i class="fab fa-twitter"></i>
                 </button>
 
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                <button type="button" class="btn btn-link btn-floating mx-1">
                     <i class="fab fa-github"></i>
                 </button>
             </div>
         </form>
-    </div> 
+        <div v-if="errors" class="text-danger mt-2">{{ errors }}</div>
+    </div>
 </template>
-  
+
 <script>
 export default {
     data() {
         return {
-            username: '',
-            password: ''
+            email: '',
+            password: '',
+            errors: ''
         };
     },
     methods: {
-        login() {
+        async login() {
+            try {
+                const response = await this.$inertia.post('/login', {
+                    email: this.email,
+                    password: this.password
+                });
 
+                // Check the response for success
+                if (response.data.success) {
+                    // Redirect based on user role
+                    if (this.$page.props.auth.user.role === '1') {
+                        this.$inertia.visit('Dashboard');
+                    } else {
+                        this.$inertia.visit('/');
+                    }
+                } else {
+                    this.errors = 'Invalid credentials'; // Update error message
+                }
+            } catch (error) {
+                this.errors = error.response.data.message || 'Something went wrong!';
+            }
         }
     }
 };
 </script>
-  
