@@ -53,40 +53,29 @@
                 </button>
             </div>
         </form>
-        <div v-if="errors" class="text-danger mt-2">{{ errors }}</div>
     </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
     data() {
         return {
             email: '',
             password: '',
-            errors: ''
         };
     },
     methods: {
         async login() {
             try {
-                const response = await this.$inertia.post('/login', {
-                    email: this.email,
-                    password: this.password
-                });
-
-                // Check the response for success
-                if (response.data.success) {
-                    // Redirect based on user role
-                    if (this.$page.props.auth.user.role === '1') {
-                        this.$inertia.visit('Dashboard');
-                    } else {
-                        this.$inertia.visit('/');
-                    }
-                } else {
-                    this.errors = 'Invalid credentials'; // Update error message
-                }
+                const formData = {
+                email: this.email,
+                password: this.password,
+                };
+                const response = await axios.post('/admin_login', formData);
+                console.log(response)
             } catch (error) {
-                this.errors = error.response.data.message || 'Something went wrong!';
+                console.error(error);
             }
         }
     }
