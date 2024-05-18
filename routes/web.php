@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,4 +13,3 @@ Route::middleware(['isAdmin'])->group(function () {
     });
 });
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
