@@ -28,7 +28,7 @@ return new class extends Migration
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'password' => bcrypt('password@123'),
-            'role_id' => Role::where('role', 'ADMIN')->first()->id ?? 1, // Assuming 'admin' role has id = 1
+            'role_id' => Role::where('role', 'ADMIN')->first()->id ?? User::ADMIN, // Assuming 'admin' role has id = 1
         ]);
     }
 
